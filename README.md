@@ -5,6 +5,9 @@
 [![Build](https://img.shields.io/badge/Build-Maven-blue.svg)](https://maven.apache.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Coverage](https://img.shields.io/badge/Coverage-81%25-success.svg)](target/site/jacoco/index.html)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-blueviolet?style=for-the-badge&logo=render)](https://personal-finance-manager-5ycp.onrender.com/api)
+
+Live API Base URL: [https://personal-finance-manager-5ycp.onrender.com/api](https://personal-finance-manager-5ycp.onrender.com/api)
 
 A RESTful backend application for managing personal finances, built with Java 17 and Spring Boot 3.2.0. This API allows users to track their income, expenses, and savings goals with comprehensive reporting features.
 
@@ -167,7 +170,7 @@ docker run -p 8080:8080 personal-finance-manager
 
 ## Test Coverage
 
-**Total Coverage: 81%** ✅ (Exceeds 80% requirement)
+**Total Coverage: 81%**
 
 | Package | Coverage |
 |---------|----------|
@@ -178,10 +181,26 @@ docker run -p 8080:8080 personal-finance-manager
 | exception | 75% |
 | **TOTAL** | **81%** |
 
-### Run Tests
 
 ```bash
 mvn test jacoco:report
+```
+
+## ✅ Verification
+
+This application has been verified using the provided automated test script.
+
+**To verify locally:**
+
+```bash
+# Ensure server is running on localhost:8080
+./financial_manager_tests.sh http://localhost:8080/api
+```
+
+**To verify live deployment:**
+
+```bash
+./financial_manager_tests.sh https://personal-finance-manager-5ycp.onrender.com/api
 ```
 
 ## Project Structure
