@@ -1,0 +1,48 @@
+# Compiled class files
+target/
+*.class
+
+# Log files
+*.log
+logs/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Environment files
+.env
+*.env
+
+# H2 Database files
+*.db
+*.trace.db
+*.lock.db
+
+# Build artifacts
+*.jar
+!target/*.jar
+
+# Test coverage
+jacoco.exec
+
+# Project documentation and PDFs
+PROJECT_MEMORY.md
+*.pdf
