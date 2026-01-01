@@ -4,6 +4,7 @@ import com.syfe.finance.dto.MonthlyReportResponse;
 import com.syfe.finance.dto.YearlyReportResponse;
 import com.syfe.finance.entity.Transaction;
 import com.syfe.finance.entity.TransactionType;
+import com.syfe.finance.exception.ValidationException;
 import com.syfe.finance.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
