@@ -32,6 +32,9 @@ public class ReportService {
      * @return the monthly report response
      */
     public MonthlyReportResponse getMonthlyReport(Long userId, int year, int month) {
+        if (month < 1 || month > 12) {
+            throw new ValidationException("Invalid month: " + month);
+        }
         List<Transaction> transactions = transactionRepository.findByUserIdAndYearAndMonth(userId, year, month);
 
         Map<String, BigDecimal> incomeByCategory = new HashMap<>();

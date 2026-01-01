@@ -55,10 +55,20 @@ public class GlobalExceptionHandler {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining(", "));
-        
+
         ErrorResponse error = ErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(message)
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleJsonParseExceptions(
+            org.springframework.http.converter.HttpMessageNotReadableException ex) {
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Invalid request format or value")
                 .build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
