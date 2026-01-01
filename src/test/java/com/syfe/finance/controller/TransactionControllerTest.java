@@ -32,121 +32,124 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 class TransactionControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+        @Autowired
+        private ObjectMapper objectMapper;
 
-    @MockBean
-    private TransactionService transactionService;
+        @MockBean
+        private TransactionService transactionService;
 
-    @MockBean
-    private AuthService authService;
+        @MockBean
+        private AuthService authService;
 
-    @MockBean
-    private CustomUserDetailsService userDetailsService;
+        @MockBean
+        private CustomUserDetailsService userDetailsService;
 
-    @MockBean
-    private AuthenticationManager authenticationManager;
+        @MockBean
+        private AuthenticationManager authenticationManager;
 
-    private User user;
-    private TransactionRequest transactionRequest;
-    private TransactionResponse transactionResponse;
+        @MockBean
+        private com.syfe.finance.service.CategoryService categoryService;
 
-    @BeforeEach
-    void setUp() {
-        user = User.builder()
-                .id(1L)
-                .username("test@example.com")
-                .build();
+        private User user;
+        private TransactionRequest transactionRequest;
+        private TransactionResponse transactionResponse;
 
-        transactionRequest = TransactionRequest.builder()
-                .amount(new BigDecimal("5000.00"))
-                .date(LocalDate.now().minusDays(1))
-                .category("Salary")
-                .description("January salary")
-                .build();
+        @BeforeEach
+        void setUp() {
+                user = User.builder()
+                                .id(1L)
+                                .username("test@example.com")
+                                .build();
 
-        transactionResponse = TransactionResponse.builder()
-                .id(1L)
-                .amount(new BigDecimal("5000.00"))
-                .date(LocalDate.now().minusDays(1))
-                .category("Salary")
-                .description("January salary")
-                .type("INCOME")
-                .build();
-    }
+                transactionRequest = TransactionRequest.builder()
+                                .amount(new BigDecimal("5000.00"))
+                                .date(LocalDate.now().minusDays(1))
+                                .category("Salary")
+                                .description("January salary")
+                                .build();
 
-    @Test
-    @DisplayName("POST /api/transactions - Success returns 201")
-    void createTransaction_Success() throws Exception {
-        when(authService.getCurrentUser()).thenReturn(user);
-        when(transactionService.createTransaction(any(TransactionRequest.class), any(User.class)))
-                .thenReturn(transactionResponse);
+                transactionResponse = TransactionResponse.builder()
+                                .id(1L)
+                                .amount(new BigDecimal("5000.00"))
+                                .date(LocalDate.now().minusDays(1))
+                                .category("Salary")
+                                .description("January salary")
+                                .type("INCOME")
+                                .build();
+        }
 
-        mockMvc.perform(post("/api/transactions")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(transactionRequest)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.amount").value(5000.00))
-                .andExpect(jsonPath("$.category").value("Salary"));
-    }
+        @Test
+        @DisplayName("POST /api/transactions - Success returns 201")
+        void createTransaction_Success() throws Exception {
+                when(authService.getCurrentUser()).thenReturn(user);
+                when(transactionService.createTransaction(any(TransactionRequest.class), any(User.class)))
+                                .thenReturn(transactionResponse);
 
-    @Test
-    @DisplayName("GET /api/transactions - Returns list")
-    void getAllTransactions_Success() throws Exception {
-        TransactionListResponse listResponse = TransactionListResponse.builder()
-                .transactions(Arrays.asList(transactionResponse))
-                .build();
+                mockMvc.perform(post("/api/transactions")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(transactionRequest)))
+                                .andExpect(status().isCreated())
+                                .andExpect(jsonPath("$.id").value(1))
+                                .andExpect(jsonPath("$.amount").value(5000.00))
+                                .andExpect(jsonPath("$.category").value("Salary"));
+        }
 
-        when(authService.getCurrentUser()).thenReturn(user);
-        when(transactionService.getAllTransactions(eq(1L), any(), any(), any()))
-                .thenReturn(listResponse);
+        @Test
+        @DisplayName("GET /api/transactions - Returns list")
+        void getAllTransactions_Success() throws Exception {
+                TransactionListResponse listResponse = TransactionListResponse.builder()
+                                .transactions(Arrays.asList(transactionResponse))
+                                .build();
 
-        mockMvc.perform(get("/api/transactions"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.transactions").isArray())
-                .andExpect(jsonPath("$.transactions[0].id").value(1));
-    }
+                when(authService.getCurrentUser()).thenReturn(user);
+                when(transactionService.getAllTransactions(eq(1L), any(), any(), any()))
+                                .thenReturn(listResponse);
 
-    @Test
-    @DisplayName("GET /api/transactions/{id} - Returns single transaction")
-    void getTransactionById_Success() throws Exception {
-        when(authService.getCurrentUser()).thenReturn(user);
-        when(transactionService.getTransactionById(1L, user)).thenReturn(transactionResponse);
+                mockMvc.perform(get("/api/transactions"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.transactions").isArray())
+                                .andExpect(jsonPath("$.transactions[0].id").value(1));
+        }
 
-        mockMvc.perform(get("/api/transactions/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1));
-    }
+        @Test
+        @DisplayName("GET /api/transactions/{id} - Returns single transaction")
+        void getTransactionById_Success() throws Exception {
+                when(authService.getCurrentUser()).thenReturn(user);
+                when(transactionService.getTransactionById(1L, user)).thenReturn(transactionResponse);
 
-    @Test
-    @DisplayName("PUT /api/transactions/{id} - Update success")
-    void updateTransaction_Success() throws Exception {
-        TransactionUpdateRequest updateRequest = TransactionUpdateRequest.builder()
-                .amount(new BigDecimal("6000.00"))
-                .build();
+                mockMvc.perform(get("/api/transactions/1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(1));
+        }
 
-        when(authService.getCurrentUser()).thenReturn(user);
-        when(transactionService.updateTransaction(eq(1L), any(TransactionUpdateRequest.class), any(User.class)))
-                .thenReturn(transactionResponse);
+        @Test
+        @DisplayName("PUT /api/transactions/{id} - Update success")
+        void updateTransaction_Success() throws Exception {
+                TransactionUpdateRequest updateRequest = TransactionUpdateRequest.builder()
+                                .amount(new BigDecimal("6000.00"))
+                                .build();
 
-        mockMvc.perform(put("/api/transactions/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isOk());
-    }
+                when(authService.getCurrentUser()).thenReturn(user);
+                when(transactionService.updateTransaction(eq(1L), any(TransactionUpdateRequest.class), any(User.class)))
+                                .thenReturn(transactionResponse);
 
-    @Test
-    @DisplayName("DELETE /api/transactions/{id} - Success")
-    void deleteTransaction_Success() throws Exception {
-        when(authService.getCurrentUser()).thenReturn(user);
-        doNothing().when(transactionService).deleteTransaction(1L, user);
+                mockMvc.perform(put("/api/transactions/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updateRequest)))
+                                .andExpect(status().isOk());
+        }
 
-        mockMvc.perform(delete("/api/transactions/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Transaction deleted successfully"));
-    }
+        @Test
+        @DisplayName("DELETE /api/transactions/{id} - Success")
+        void deleteTransaction_Success() throws Exception {
+                when(authService.getCurrentUser()).thenReturn(user);
+                doNothing().when(transactionService).deleteTransaction(1L, user);
+
+                mockMvc.perform(delete("/api/transactions/1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.message").value("Transaction deleted successfully"));
+        }
 }
