@@ -79,7 +79,7 @@ class ExceptionTest {
                 .build();
         assertEquals(400, response2.getStatus());
         assertNotNull(response2.toString());
-        
+
         ErrorResponse response3 = new ErrorResponse(500, "Error");
         assertEquals(500, response3.getStatus());
     }
@@ -168,15 +168,27 @@ class ExceptionTest {
         BindingResult bindingResult = mock(BindingResult.class);
         FieldError fieldError1 = new FieldError("object", "field1", "must not be null");
         FieldError fieldError2 = new FieldError("object", "field2", "must be valid");
-        
+
         when(bindingResult.getFieldErrors()).thenReturn(Arrays.asList(fieldError1, fieldError2));
-        
+
         MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
         when(ex.getBindingResult()).thenReturn(bindingResult);
-        
+
         ResponseEntity<ErrorResponse> response = handler.handleMethodArgumentNotValidException(ex);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody().getMessage().contains("must not be null"));
+    }
+
+    @Test
+    @DisplayName("GlobalExceptionHandler - handles HttpMessageNotReadableException")
+    void testHandleHttpMessageNotReadableException() {
+        org.springframework.http.converter.HttpMessageNotReadableException ex = mock(
+                org.springframework.http.converter.HttpMessageNotReadableException.class);
+
+        ResponseEntity<ErrorResponse> response = handler.handleJsonParseExceptions(ex);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Invalid request format or value", response.getBody().getMessage());
     }
 }
